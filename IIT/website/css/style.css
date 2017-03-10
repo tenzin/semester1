@@ -1,0 +1,106 @@
+
+
+.clear {
+    clear:both;
+}
+
+/*style for content*/
+.container {
+    width: 960px;
+    margin: auto;
+}
+
+header {
+    /* showing the use of color name */
+    background-color: deepskyblue;
+    font-family: fantasy;
+    font-size: 42px;
+    font-weight: bold;
+}
+
+#nav_heading {
+    font-family:cursive;
+    font-weight: bold;
+    font-size: 18px;
+    background-color: dimgray;
+    color: white;
+    text-align: center;
+}
+nav {
+    
+    width:180px;
+    float:left;
+    padding-top: 10px
+}
+
+nav ul {
+    background-color: aliceblue;
+    /*padding:0;*/
+    list-style-type: circle;
+    padding-bottom: 10px;
+    /*text-align: center;*/
+}
+
+
+nav ul li a {
+    font-family: sans-serif;
+}
+
+nav ul li a:hover {
+    color: white;
+    background-color: black;
+}
+
+#content {
+    width: 760px;
+    float:right;
+    padding: 10px;
+}
+
+.img_label {
+    font-style: italic;
+    font-size: 14px;
+    color: dimgrey;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    font-family: serif;
+    color: cornflowerblue;
+}
+
+h1 {
+    font-family: fantasy;
+    font-weight: bold;
+    
+}
+footer {
+    text-align: right;
+    font-size: 12px;
+    font-style: italic;
+}
+
+li.inside_content {
+    font-weight: bold;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, td, th {
+    border: 1px solid #000000; 
+    text-align: left;
+    padding: 8px;
+}
+
+table tr:nth-child(even) {
+    /* showing the use of hex color representation */
+    background-color: #B0C0E0;
+}
+
+img {
+    border-width: medium;
+    border-style: double;
+}
