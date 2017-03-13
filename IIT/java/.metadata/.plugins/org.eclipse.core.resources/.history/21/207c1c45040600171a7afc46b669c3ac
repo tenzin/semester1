@@ -1,0 +1,76 @@
+package com.tenzindendup.iit;
+
+import java.awt.Color;
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class MyFirstJavaSwingGUI {
+
+	private JFrame frame;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MyFirstJavaSwingGUI window = new MyFirstJavaSwingGUI();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public MyFirstJavaSwingGUI() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		JLabel JLabel_FirstJavaLabel = new JLabel("First Java Label");
+		JLabel_FirstJavaLabel.setBounds(33, 20, 381, 32);
+		frame.getContentPane().add(JLabel_FirstJavaLabel);
+		
+		JButton JButton_Quit = new JButton("Quit");
+		JButton_Quit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(JButton_Quit.getText().equals("Quit")) {
+						JLabel_FirstJavaLabel.setForeground(Color.red);
+						JLabel_FirstJavaLabel.setText("You have clicked the Quit button. Dont ever do that!!");
+						JButton_Quit.setText("Sorry!!");
+				}
+				
+			}
+		});
+		JButton_Quit.setBounds(44, 126, 105, 29);
+		frame.getContentPane().add(JButton_Quit);
+		
+		JCheckBox JCheckbox_Event = new JCheckBox("Unchecked");
+		JCheckbox_Event.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JCheckbox_Event.setText(JCheckbox_Event.isSelected()?"Checked":"Unchecked");
+			}
+		});
+		JCheckbox_Event.setBounds(44, 81, 128, 23);
+		frame.getContentPane().add(JCheckbox_Event);
+	}
+}
