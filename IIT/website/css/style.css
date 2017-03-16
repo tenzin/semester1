@@ -1,15 +1,16 @@
 
-
+/* This clears all styles */
 .clear {
     clear:both;
 }
 
-/*style for content*/
+/*style for content container*/
 .container {
     width: 960px;
     margin: auto;
 }
 
+/*style for header*/
 header {
     /* showing the use of color name */
     background-color: deepskyblue;
@@ -18,6 +19,7 @@ header {
     font-weight: bold;
 }
 
+/* This part describes the navigation styles */
 #nav_heading {
     font-family:cursive;
     font-weight: bold;
@@ -26,6 +28,7 @@ header {
     color: white;
     text-align: center;
 }
+
 nav {
     
     width:180px;
@@ -51,18 +54,21 @@ nav ul li a:hover {
     background-color: black;
 }
 
+/* actual content style */
 #content {
     width: 760px;
     float:right;
     padding: 10px;
 }
 
+/* Style for image caption/label */
 .img_label {
     font-style: italic;
     font-size: 14px;
     color: dimgrey;
 }
 
+/* style for breadcrumb */
 .breadcrumb {
     font-size: 14px;
     font-family: serif;
@@ -74,16 +80,20 @@ h1 {
     font-weight: bold;
     
 }
+
+/* Footer style */
 footer {
     text-align: right;
     font-size: 12px;
     font-style: italic;
 }
 
+/* style for list inside content which is different for list in navigation */
 li.inside_content {
     font-weight: bold;
 }
 
+/* following styles are for table */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -100,6 +110,7 @@ table tr:nth-child(even) {
     background-color: #B0C0E0;
 }
 
+/* Style for images in the web pages */
 img {
     border-width: medium;
     border-style: double;
