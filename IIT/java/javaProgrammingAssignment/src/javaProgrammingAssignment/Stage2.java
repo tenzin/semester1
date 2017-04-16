@@ -2,10 +2,11 @@
  * Stage2.java
  * Author: Tenzin Dendup (u3149399)
  * Date Created: 6 April 2017
- * Date Last Changed: 6 April 2017
+ * Date Last Changed: 14 April 2017
  * This is a Java GUI application to calculate number of days alive.
  * It is stage 2 of PPIT Java Assignment, University of Canberra.
- * Input: 2 sets of dates (Date of birth and another date) entered through GUI
+ * Stage 2 is implemented with GUI and simple functions called from action events.
+ * Input: Name and two sets of dates (Date of birth and another date) entered through GUI
  * Output: Number of days alive from date of birth to second date
  * 
  */
@@ -29,7 +30,8 @@ import java.util.GregorianCalendar;
 import java.awt.event.ActionEvent;
 
 public class Stage2 {
-
+	
+	//Constants
 	public static final int NUM_DAYS_NORMAL_YEAR = 365;
 	public static final int NUM_DAYS_LEAP_YEAR = 366;
 	public static final int[] NUMBER_OF_MONTH_DAYS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
@@ -41,6 +43,7 @@ public class Stage2 {
 	private JTextField jTextField_GivenDay;
 	private JTextField jTextField_GivenMonth;
 	private JTextField jTextField_GivenYear;
+	private JTextField jTextField_Name;
 	
 	int iBirthDay, iBirthMonth, iBirthYear;
 	int iGivenDay, iGivenMonth, iGivenYear;
@@ -75,13 +78,13 @@ public class Stage2 {
 	private void initialize() {
 		jFrame_DaysAliveCalculator = new JFrame();
 		jFrame_DaysAliveCalculator.setTitle("Days Alive Calculator");
-		jFrame_DaysAliveCalculator.setBounds(100, 100, 361, 173);
+		jFrame_DaysAliveCalculator.setBounds(100, 100, 360, 210);
 		jFrame_DaysAliveCalculator.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jFrame_DaysAliveCalculator.getContentPane().setLayout(null);
 		
 		JPanel jPanel_BirthYear = new JPanel();
 		jPanel_BirthYear.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Birth Year", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		jPanel_BirthYear.setBounds(6, 16, 163, 75);
+		jPanel_BirthYear.setBounds(6, 45, 163, 75);
 		jFrame_DaysAliveCalculator.getContentPane().add(jPanel_BirthYear);
 		jPanel_BirthYear.setLayout(null);
 		
@@ -115,7 +118,7 @@ public class Stage2 {
 		
 		JPanel jPanel_GivenYear = new JPanel();
 		jPanel_GivenYear.setBorder(new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), "Given Year", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		jPanel_GivenYear.setBounds(192, 16, 163, 75);
+		jPanel_GivenYear.setBounds(192, 45, 163, 75);
 		jFrame_DaysAliveCalculator.getContentPane().add(jPanel_GivenYear);
 		jPanel_GivenYear.setLayout(null);
 		
@@ -148,33 +151,45 @@ public class Stage2 {
 		
 		JLabel jLabel_Result = new JLabel("");
 		jLabel_Result.setFont(new Font("Lucida Grande", Font.BOLD, 13));
-		jLabel_Result.setBounds(212, 103, 78, 29);
+		jLabel_Result.setBounds(55, 124, 300, 29);
 		jFrame_DaysAliveCalculator.getContentPane().add(jLabel_Result);
 		
 		JButton jButton_Calculate = new JButton("Calculate");
 		jButton_Calculate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Get values entered by the user
-				iBirthDay = Integer.parseInt(jTextField_BirthDay.getText());
-				iBirthMonth = Integer.parseInt(jTextField_BirthMonth.getText());
-				iBirthYear = Integer.parseInt(jTextField_BirthYear.getText());
-				iGivenDay = Integer.parseInt(jTextField_GivenDay.getText());
-				iGivenMonth = Integer.parseInt(jTextField_GivenMonth.getText());
-				iGivenYear = Integer.parseInt(jTextField_GivenYear.getText());
-				
-				//Call function to start calculation
-				calculateNumberOfDays();
-				
-				//After calculation is done, Display the result in GUI
-				jLabel_Result.setText(Integer.toString(iNumDaysAlive));
-				
+				//Get values entered by the user in try block to check for valid input
+				//Input values are trimmed to remove accidental leading and trailing spaces
+				try {
+					iBirthDay = Integer.parseInt(jTextField_BirthDay.getText().trim());
+					iBirthMonth = Integer.parseInt(jTextField_BirthMonth.getText().trim());
+					iBirthYear = Integer.parseInt(jTextField_BirthYear.getText().trim());
+					iGivenDay = Integer.parseInt(jTextField_GivenDay.getText().trim());
+					iGivenMonth = Integer.parseInt(jTextField_GivenMonth.getText().trim());
+					iGivenYear = Integer.parseInt(jTextField_GivenYear.getText().trim());
+					
+					//Check for days greater than 31 and months greater than 12
+					if(iBirthDay > 31 || iGivenDay > 31 || iBirthMonth > 12 || iGivenMonth > 12)
+						jLabel_Result.setText("Error in Input");
+					else {
+						//Input has no error.
+						calculateNumberOfDays();
+						//After calculation is done, Display the result in GUI
+						jLabel_Result.setText(jTextField_Name.getText() + " is alive for " + Integer.toString(iNumDaysAlive) + " days");
+					}
+					
+				}
+				catch(NumberFormatException e1) {
+					//input is invalid
+					jLabel_Result.setText("Error in Input");
+				}
 			}
 		});
-		jButton_Calculate.setBounds(6, 103, 86, 29);
+		
+		jButton_Calculate.setBounds(6, 153, 86, 29);
 		jFrame_DaysAliveCalculator.getContentPane().add(jButton_Calculate);
 		
-		JLabel jLabel_ResultLabel = new JLabel("No. of Days Alive:");
-		jLabel_ResultLabel.setBounds(92, 103, 117, 29);
+		JLabel jLabel_ResultLabel = new JLabel("Result:");
+		jLabel_ResultLabel.setBounds(6, 124, 47, 29);
 		jFrame_DaysAliveCalculator.getContentPane().add(jLabel_ResultLabel);
 		
 		JButton jButton_Quit = new JButton("Quit");
@@ -183,11 +198,41 @@ public class Stage2 {
 				System.exit(0); 	// Exit the application when user clicks on Quit button
 			}
 		});
-		jButton_Quit.setBounds(291, 103, 64, 29);
+		jButton_Quit.setBounds(291, 153, 64, 29);
 		jFrame_DaysAliveCalculator.getContentPane().add(jButton_Quit);
+		
+		JLabel jLabel_Name = new JLabel("Name:");
+		jLabel_Name.setBounds(62, 17, 47, 16);
+		jFrame_DaysAliveCalculator.getContentPane().add(jLabel_Name);
+		
+		jTextField_Name = new JTextField();
+		jTextField_Name.setBounds(109, 12, 147, 26);
+		jFrame_DaysAliveCalculator.getContentPane().add(jTextField_Name);
+		jTextField_Name.setColumns(10);
+		
+		JButton jButton_Reset = new JButton("Reset");
+		jButton_Reset.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Reset all fields to empty when user clicks on Reset button
+				jTextField_BirthDay.setText(null);
+				jTextField_BirthMonth.setText(null);
+				jTextField_BirthYear.setText(null);
+				jTextField_GivenDay.setText(null);
+				jTextField_GivenMonth.setText(null);
+				jTextField_GivenYear.setText(null);
+				jTextField_Name.setText(null);
+				jLabel_Result.setText(null);
+				
+			}
+		});
+		jButton_Reset.setBounds(141, 153, 78, 29);
+		jFrame_DaysAliveCalculator.getContentPane().add(jButton_Reset);
 		
 	}
 
+	/** Functions to calculate number of days when user clicks on Calculate button
+	 *  These functions are same ones used in Stage 1.
+	 */
 	protected void calculateNumberOfDays() {
 		
 		int iNumFullYear = 0;

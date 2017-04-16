@@ -2,11 +2,13 @@
  * Stage1.java
  * Author: Tenzin Dendup (u3149399)
  * Date Created: 31 March 2017
- * Date Last Changed: 6 April 2017
+ * Date Last Changed: 14 April 2017
  * This is a Java console application to calculate number of days alive.
  * It is stage 1 of PPIT Java Assignment, University of Canberra.
+ * Stage 1 is implemented using simple functions called from main method.
  * Input: 2 sets of dates (Date of birth and another date)
  * Output: Number of days alive from date of birth to second date
+ * 
  * 
  */
 
@@ -17,11 +19,72 @@ import java.util.Scanner;
 
 public class Stage1 {
 	
+	//Constants
 	public static final int NUM_DAYS_NORMAL_YEAR = 365;
 	public static final int NUM_DAYS_LEAP_YEAR = 366;
 	public static final int[] NUMBER_OF_MONTH_DAYS = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 	
-	/* Function to calculate number of days in the birth year */
+	public static void main(String[] args) {
+		int iNumFullYear = 0;
+		int iNumLeapYear = 0;
+		int iNumNormalYear = 0;
+		int iNumDaysAlive = 0;
+		String[] saTemp1, saTemp2;
+		
+		Scanner inConsole = new Scanner(System.in);
+		
+		System.out.println("Enter Date of Birth (dd/mm/yyyy):");
+		saTemp1 = inConsole.nextLine().split("/");
+		System.out.println("Enter Given Date (dd/mm/yyyy):");
+		saTemp2 = inConsole.nextLine().split("/");
+		inConsole.close();
+		
+		try { //Check for input error
+			int iBirthDay = Integer.parseInt(saTemp1[0]);
+			int iBirthMonth = Integer.parseInt(saTemp1[1]);
+			int iBirthYear = Integer.parseInt(saTemp1[2]);
+			int iGivenDay = Integer.parseInt(saTemp2[0]);
+			int iGivenMonth = Integer.parseInt(saTemp2[1]);
+			int iGivenYear = Integer.parseInt(saTemp2[2]);
+			
+			if(iBirthDay > 31 || iGivenDay > 31 || iBirthMonth > 12 || iGivenMonth > 12) { //Error in Input
+				System.out.println("Error in Input");
+				System.exit(1);
+			}
+			else { //Input is fine
+				// Calculate the number of full years. If we omit the birth year and the given year, the years in between are full years
+				iNumFullYear = iGivenYear - iBirthYear - 1;
+				
+				// Now calculate the number of leap years in those full years
+				for(int iI=iBirthYear + 1; iI < iGivenYear; iI++) {
+					if(new GregorianCalendar().isLeapYear(iI))
+						iNumLeapYear++;
+				}
+				
+				iNumNormalYear = iNumFullYear - iNumLeapYear;
+				
+				//Number of Days alive is the sum of days in birth year, given year and full years in between
+				iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + calculateDaysFullYears(iNumNormalYear, iNumLeapYear); 
+				
+				System.out.println("Date of birth: " + iBirthDay + "/" + iBirthMonth + "/" + iBirthYear);
+				System.out.println("Given date: " + iGivenDay + "/" + iGivenMonth + "/" + iGivenYear);
+				System.out.println("Number of days alive = " + iNumDaysAlive);
+			}
+		}
+		catch(NumberFormatException | ArrayIndexOutOfBoundsException e) { //Error in input
+			System.out.println("Error in Input");
+			System.exit(1);
+		}
+	}
+	
+	/*** Functions to do the calculation ***
+	 *   Divided in three functions
+	 *   Function1: calculates Days in Birth Year
+	 *   Function2: calculates Days in Given Year
+	 *   Function3: calculates Days in full years between birth year and given year
+	 */
+	
+	/* Function1: to calculate number of days in the birth year */
 	public static int calculateDaysBirthYear(int iDay, int iMonth, int iYear) {
 		int iNumDays = 0;
 		
@@ -39,7 +102,7 @@ public class Stage1 {
 		return(iNumDays);
 	}
 	
-	/* Function to calculate number of days in the given year */
+	/* Function2: to calculate number of days in the given year */
 	public static int calculateDaysGivenYear(int iDay, int iMonth, int iYear) {
 		int iNumDays = 0;
 		
@@ -57,54 +120,9 @@ public class Stage1 {
 		return(iNumDays);
 	}
 	
-	/* Function to calculate number of days in full years between birth year and given year */
+	/* Function3: to calculate number of days in full years between birth year and given year */
 	public static int calculateDaysFullYears(int iNumNormalYear, int iNumLeapYear) {
 		return((iNumNormalYear * NUM_DAYS_NORMAL_YEAR) + (iNumLeapYear * NUM_DAYS_LEAP_YEAR));
-	}
-	
-	public static void main(String[] args) {
-		int iNumFullYear = 0;
-		int iNumLeapYear = 0;
-		int iNumNormalYear = 0;
-		int iNumDaysAlive = 0;
-		
-		Scanner inConsole = new Scanner(System.in);
-		
-		/* Read day, month and year of date of birth */
-		System.out.println("Enter the day of the Date of Birth: ");
-		int iBirthDay = inConsole.nextInt();
-		System.out.println("Enter the month of the Date of Birth: ");
-		int iBirthMonth = inConsole.nextInt();
-		System.out.println("Enter the year of the of the Date of Birth: ");
-		int iBirthYear = inConsole.nextInt();
-		
-		/* Read day, month and year of given date */
-		System.out.println("Enter the day of the Given date: ");
-		int iGivenDay = inConsole.nextInt();
-		System.out.println("Enter the month of the Given Date: ");
-		int iGivenMonth = inConsole.nextInt();
-		System.out.println("Enter the year of the of the Given Date: ");
-		int iGivenYear = inConsole.nextInt();
-		
-		// Calculate the number of full years. If we omit the birth year and the given year, the years in between are full years
-		iNumFullYear = iGivenYear - iBirthYear - 1;
-		
-		// Now calculate the number of leap years in those full years
-		for(int iI=iBirthYear + 1; iI < iGivenYear; iI++) {
-			if(new GregorianCalendar().isLeapYear(iI))
-				iNumLeapYear++;
-		}
-		
-		iNumNormalYear = iNumFullYear - iNumLeapYear;
-		
-		//Number of Days alive is the sum of days in birth year, given year and full years in between
-		iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + calculateDaysFullYears(iNumNormalYear, iNumLeapYear); 
-		
-		System.out.println("Date of birth: " + iBirthDay + "/" + iBirthMonth + "/" + iBirthYear);
-		System.out.println("Given date: " + iGivenDay + "/" + iGivenMonth + "/" + iGivenYear);
-		System.out.println("Number of days alive = " + iNumDaysAlive);
-		
-		inConsole.close();
 	}
 
 }
