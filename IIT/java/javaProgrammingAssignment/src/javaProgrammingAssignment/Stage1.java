@@ -4,7 +4,7 @@
  * Date Created: 31 March 2017
  * Date Last Changed: 14 April 2017
  * This is a Java console application to calculate number of days alive.
- * It is stage 1 of PPIT Java Assignment, University of Canberra.
+ * It is stage 1 of IIT Java Assignment, University of Canberra.
  * Stage 1 is implemented using simple functions called from main method.
  * Input: 2 sets of dates (Date of birth and another date)
  * Output: Number of days alive from date of birth to second date

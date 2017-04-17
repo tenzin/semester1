@@ -4,7 +4,7 @@
  * Date Created: 6 April 2017
  * Date Last Changed: 14 April 2017
  * This is a Java GUI application to calculate number of days alive.
- * It is stage 2 of PPIT Java Assignment, University of Canberra.
+ * It is stage 2 of IIT Java Assignment, University of Canberra.
  * Stage 2 is implemented with GUI and simple functions called from action events.
  * Input: Name and two sets of dates (Date of birth and another date) entered through GUI
  * Output: Number of days alive from date of birth to second date

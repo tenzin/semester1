@@ -1,3 +1,13 @@
+/*
+ * MyDate.java
+ * Author: Tenzin Dendup (u3149399)
+ * Date Created: 14 April 2017
+ * Date Last Changed: 17 April 2017
+ * This is java source code of MyDate object
+ * It is used by Stage3.java and Stage4.java files for IIT Java Assignment, University of Canberra.
+ * 
+ */
+
 package javaProgrammingAssignment;
 
 public class MyDate {
@@ -36,5 +46,12 @@ public class MyDate {
 		this.iDay = iDay;
 		this.iMonth = iMonth;
 		this.iYear = iYear;
+	}
+	
+	public boolean equals(MyDate date) {
+		if(this.iDay == date.iDay && this.iMonth == date.iMonth && this.iYear == date.iYear)
+			return true;
+		else
+			return false;
 	}
 }

@@ -1,3 +1,13 @@
+/*
+ * Person.java
+ * Author: Tenzin Dendup (u3149399)
+ * Date Created: 14 April 2017
+ * Date Last Changed: 17 April 2017
+ * This is java source code of Person object
+ * It is used by Stage3.java and Stage4.java files for IIT Java Assignment, University of Canberra.
+ * 
+ */
+
 package javaProgrammingAssignment;
 
 import java.util.GregorianCalendar;
@@ -76,6 +86,10 @@ public class Person {
 	
 	public int[] getGivenDate() {
 		return(givenDate.getDate());
+	}
+	
+	public MyDate getGivenDateObject() {
+		return givenDate;
 	}
 	
 	public String getBirthDateFormatted() {
