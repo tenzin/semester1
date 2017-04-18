@@ -119,7 +119,7 @@ public class Stage3 {
 	 */
 	private void initialize() {
 		frmDaysAliveCalculator = new JFrame();
-		frmDaysAliveCalculator.setTitle("Days Alive Calculator");
+		frmDaysAliveCalculator.setTitle("Days Alive Calculator - Stage3 - u3149399");
 		frmDaysAliveCalculator.setBounds(100, 100, 648, 447);
 		frmDaysAliveCalculator.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmDaysAliveCalculator.getContentPane().setLayout(null);
@@ -188,11 +188,21 @@ public class Stage3 {
 						jPanel_DrawingArea.repaint();
 					}
 					
-					else { //List has not been selected before. Just draw the currently selected one
-						rectangleList.add(jArrayListRectangles.get(iIndex));
-						jPanel_DrawingArea.setBarGraphList(rectangleList);
-						jPanel_DrawingArea.setColor(new Color[] {Color.BLUE});
+					else { //List has not been selected before. So draw all
+						
+						Color[] color = new Color[jArrayListRectangles.size()];
+						jPanel_DrawingArea.setBarGraphList(jArrayListRectangles);
+						for(int iI = 0; iI < jArrayListRectangles.size(); iI++) {
+							if(iI == iIndex)
+								color[iI] = Color.BLUE;
+							else
+								color[iI] = Color.BLACK;
+						}
+						jPanel_DrawingArea.setColor(color);
 						jPanel_DrawingArea.repaint();
+						
+						//Reset input fields to null
+						
 					}
 					
 					//Show details of selected person
@@ -278,14 +288,19 @@ public class Stage3 {
 						//now update the rectangles list and
 						createRectangles(jPanel_DrawingArea.getWidth(), jPanel_DrawingArea.getHeight());
 						
-						//redraw the bar graph of the selected person
+						//redraw all bar graphs
 						//Clear the panel first
 						jPanel_DrawingArea.clear(jPanel_DrawingArea.getGraphics());
 						
-						ArrayList<Rectangle2D.Double> rectangleList = new ArrayList<Rectangle2D.Double>();
-						rectangleList.add(jArrayListRectangles.get(iIndex));
-						jPanel_DrawingArea.setBarGraphList(rectangleList);
-						jPanel_DrawingArea.setColor(new Color[] {Color.BLUE});
+						Color[] color = new Color[jArrayListRectangles.size()];
+						jPanel_DrawingArea.setBarGraphList(jArrayListRectangles);
+						for(int iI = 0; iI < jArrayListRectangles.size(); iI++) {
+							if(iI == iIndex)
+								color[iI] = Color.BLUE;
+							else
+								color[iI] = Color.BLACK;
+						}
+						jPanel_DrawingArea.setColor(color);
 						jPanel_DrawingArea.repaint();
 
 						jLabel_ErrorMessage.setText(null);
@@ -341,14 +356,21 @@ public class Stage3 {
 							//now update the rectangles list
 							createRectangles(jPanel_DrawingArea.getWidth(), jPanel_DrawingArea.getHeight());
 							
-							//redraw the bar graph for the selected item
+							//redraw all the bar graph
 							//Clear the panel first
 							jPanel_DrawingArea.clear(jPanel_DrawingArea.getGraphics());
 							
-							ArrayList<Rectangle2D.Double> rectangleList = new ArrayList<Rectangle2D.Double>();
-							rectangleList.add(jArrayListRectangles.get(iIndex));
-							jPanel_DrawingArea.setBarGraphList(rectangleList);
-							jPanel_DrawingArea.setColor(new Color[] {Color.BLUE});
+							Color[] color = new Color[jArrayListRectangles.size()];
+							jPanel_DrawingArea.setBarGraphList(jArrayListRectangles);
+							for(int iI = 0; iI < jArrayListRectangles.size(); iI++) {
+								if(iI == iIndex)
+									color[iI] = Color.BLUE;
+								else
+									color[iI] = Color.BLACK;
+							}
+							jPanel_DrawingArea.setColor(color);
+							jPanel_DrawingArea.repaint();
+							
 							jPanel_DrawingArea.repaint();
 						
 							jLabel_ErrorMessage.setText(null);
@@ -454,7 +476,7 @@ public class Stage3 {
 			//height of rectangle/bar-graph will be proportionate to height of drawing area and height of other rectangles
 			//Bar-graph for Person with highest days_alive will be longest and others will be calculated proportionately
 			double iRectangleHeight = (((double)person.getDaysAlive() / (double) iMaxYear) * (double) (iHeight - iY - 5));
-			jArrayListRectangles.add(new Rectangle2D.Double(iX, 10, iRectangleWidth, iRectangleHeight));
+			jArrayListRectangles.add(new Rectangle2D.Double(iX, (iHeight - iRectangleHeight - 10), iRectangleWidth, iRectangleHeight));
 			iXCounter += 2;
 		}
 	}

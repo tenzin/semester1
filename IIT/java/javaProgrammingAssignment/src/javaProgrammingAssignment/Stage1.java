@@ -104,7 +104,6 @@ public class Stage1 {
 		//Check for LEAP year && February month. If TRUE add 1 to iNumDays;
 		if(new GregorianCalendar().isLeapYear(iYear) && iMonth == 2)
 			iNumDays++;
-
 		return(iNumDays);
 	}
 	
@@ -122,7 +121,6 @@ public class Stage1 {
 		//Check for LEAP year && month beyond February. If TRUE add 1 to iNumDays
 		if(new GregorianCalendar().isLeapYear(iYear) && iMonth > 2)
 			iNumDays++;
-		
 		return(iNumDays);
 	}
 	
