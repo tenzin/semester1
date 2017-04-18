@@ -33,13 +33,15 @@ public class Stage1 {
 		
 		Scanner inConsole = new Scanner(System.in);
 		
+		//Read input in dd/mm/yyyy format
 		System.out.println("Enter Date of Birth (dd/mm/yyyy):");
 		saTemp1 = inConsole.nextLine().split("/");
 		System.out.println("Enter Given Date (dd/mm/yyyy):");
 		saTemp2 = inConsole.nextLine().split("/");
 		inConsole.close();
 		
-		try { //Check for input error
+		//Check for input errors using try catch
+		try {
 			int iBirthDay = Integer.parseInt(saTemp1[0]);
 			int iBirthMonth = Integer.parseInt(saTemp1[1]);
 			int iBirthYear = Integer.parseInt(saTemp1[2]);
@@ -47,7 +49,7 @@ public class Stage1 {
 			int iGivenMonth = Integer.parseInt(saTemp2[1]);
 			int iGivenYear = Integer.parseInt(saTemp2[2]);
 			
-			if(iBirthDay > 31 || iGivenDay > 31 || iBirthMonth > 12 || iGivenMonth > 12) { //Error in Input
+			if(iBirthDay > 31 || iGivenDay > 31 || iBirthMonth > 12 || iGivenMonth > 12) { //Invalid day and month
 				System.out.println("Error in Input");
 				System.exit(1);
 			}
@@ -61,11 +63,15 @@ public class Stage1 {
 						iNumLeapYear++;
 				}
 				
+				//Calculate number of normal years
 				iNumNormalYear = iNumFullYear - iNumLeapYear;
 				
-				//Number of Days alive is the sum of days in birth year, given year and full years in between
-				iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + calculateDaysFullYears(iNumNormalYear, iNumLeapYear); 
+				//Number of Days alive is the sum of days in birth year, given year, and full years in between
+				iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + 
+								calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + 
+								calculateDaysFullYears(iNumNormalYear, iNumLeapYear); 
 				
+				//Display result
 				System.out.println("Date of birth: " + iBirthDay + "/" + iBirthMonth + "/" + iBirthYear);
 				System.out.println("Given date: " + iGivenDay + "/" + iGivenMonth + "/" + iGivenYear);
 				System.out.println("Number of days alive = " + iNumDaysAlive);
@@ -78,7 +84,7 @@ public class Stage1 {
 	}
 	
 	/*** Functions to do the calculation ***
-	 *   Divided in three functions
+	 *   Divided into three functions
 	 *   Function1: calculates Days in Birth Year
 	 *   Function2: calculates Days in Given Year
 	 *   Function3: calculates Days in full years between birth year and given year

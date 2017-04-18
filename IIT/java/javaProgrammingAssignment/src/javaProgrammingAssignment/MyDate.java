@@ -33,21 +33,25 @@ public class MyDate {
 		return iYear;
 	}
 	
+	//Method to return set of date as integer Array
 	public int[] getDate() {
 		int[] iaDate = {iDay, iMonth, iYear};
 		return(iaDate);
 	}
 	
+	//Method to return string with date formatted as dd/mm/yy
 	public String getDateFormatted() {
 		return(iDay + "/" + iMonth + "/" + iYear);
 	}
 	
+	//Method to set Date
 	public void setDate(int iDay, int iMonth, int iYear) {
 		this.iDay = iDay;
 		this.iMonth = iMonth;
 		this.iYear = iYear;
 	}
 	
+	//Method that checks if two MyDate objects are equal or not
 	public boolean equals(MyDate date) {
 		if(this.iDay == date.iDay && this.iMonth == date.iMonth && this.iYear == date.iYear)
 			return true;

@@ -7,8 +7,9 @@
  * It is stage 3 of IIT Java Assignment, University of Canberra.
  * Stage 3 is implemented with GUI and Object.
  * Stage 3 uses two other java source files, Person.java (for Person Object) and MyDate.java (For MyDate object)
+ * For drawing purposes, stage 3 uses the MyJPanel inner class from lecture examples, with modifications.
  * Input: List of Names and sets of dates (Date of birth and another date) read from text file
- * Output: Number of days alive and corresponding bar graph on GUI. Also option for user to set date.
+ * Output: Number of days alive and corresponding bar graph on GUI. Also GUI option for user to set date.
  * 
  */
 
@@ -52,11 +53,8 @@ public class Stage3 {
 	private JFrame frmDaysAliveCalculator;
 	private static ArrayList<Person> jArrayListPeople; //ArrayList to store details of people
 	private static ArrayList<Rectangle2D.Double> jArrayListRectangles; //Array List to store rectangles to draw bar graph
+	private static ArrayList<MyDate> jArrayListOriginalGivenDates; ////Array List to store original Given dates.
 	
-	//Array List to store original Given dates. 
-	//Original Given dates are stored in case user wants the original values after
-	//it is overwritten by user provided values.
-	private static ArrayList<MyDate> jArrayListOriginalGivenDates;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField jTextField_Day;
 	private JTextField jTextField_Month;
@@ -77,9 +75,11 @@ public class Stage3 {
 		jArrayListPeople = new ArrayList<Person>();
 		jArrayListOriginalGivenDates = new ArrayList<MyDate>();
 		
+		//Read input from text file
 		BufferedReader in = new BufferedReader(new FileReader("dates.txt"));
 		String sLine;
 		
+		//Store input details as ArrayList of Person objects
 		while((sLine = in.readLine()) != null) {
 			String[] saTemp1, saTemp2, saTemp3;
 			MyDate birthDate, givenDate;
@@ -90,7 +90,7 @@ public class Stage3 {
 			givenDate = new MyDate(Integer.parseInt(saTemp3[0]), Integer.parseInt(saTemp3[1]), Integer.parseInt(saTemp3[2]));
 			jArrayListPeople.add(new Person(saTemp1[0], birthDate, givenDate));
 			
-			//Store original given dates safely
+			//Store original given dates safely in ArrayList of MyDate objects
 			jArrayListOriginalGivenDates.add(new MyDate(Integer.parseInt(saTemp3[0]), Integer.parseInt(saTemp3[1]), Integer.parseInt(saTemp3[2])));
 		}
 		in.close();
@@ -157,18 +157,20 @@ public class Stage3 {
 		frmDaysAliveCalculator.getContentPane().add(jLabel_List);
 		
 		DefaultListModel<String> model = new DefaultListModel<>();
-		//Add items to List Model
+		//Add name of all Person objects to List Model
 		for(Person person: jArrayListPeople)
 			model.addElement(person.getName());
-		//Call function to create an Array List of rectangles corresponding to People's details
+		
+		//Call function to create an ArrayList of rectangles corresponding to ArrayList of Person objects
 		//These rectangles will be used to draw the bar graph
+		//Width and Height of Drawing Panel are passed as arguments which will be used to determine rectangle dimension
 		createRectangles(jPanel_DrawingArea.getWidth(), jPanel_DrawingArea.getHeight());
 		
 		JScrollPane jScrollPane_List = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		jScrollPane_List.setBounds(6, 35, 220, 118);
 		JList<String> jList_ListOfPeople = new JList<String>(model);
 		jList_ListOfPeople.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
+			public void valueChanged(ListSelectionEvent e) { //Action listener when user selects names in JList
 				
 				if (!e.getValueIsAdjusting()) {
 					
@@ -249,7 +251,7 @@ public class Stage3 {
 		
 		JButton jButton_SetDataFile = new JButton("Set");
 		jButton_SetDataFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) { //Action Listener when user wants to reset given date to that from file
 				
 				int iIndex = jList_ListOfPeople.getSelectedIndex();
 				
@@ -269,7 +271,7 @@ public class Stage3 {
 					
 					else { 
 						
-						//Change back the given date to the original data from file
+						//Change back the given date to the original date
 						int[] temp = jArrayListOriginalGivenDates.get(iIndex).getDate();
 						jArrayListPeople.get(iIndex).setGivenDate(temp[0], temp[1], temp[2]);
 						
@@ -278,8 +280,6 @@ public class Stage3 {
 						
 						//redraw the bar graph of the selected person
 						//Clear the panel first
-						jPanel_DrawingArea.clear(jPanel_DrawingArea.getGraphics());
-						
 						jPanel_DrawingArea.clear(jPanel_DrawingArea.getGraphics());
 						
 						ArrayList<Rectangle2D.Double> rectangleList = new ArrayList<Rectangle2D.Double>();
@@ -310,7 +310,7 @@ public class Stage3 {
 		jButton_SetDateUser.setBounds(16, 81, 117, 29);
 		jPanel_Input.add(jButton_SetDateUser);
 		jButton_SetDateUser.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) { //Action Listener when user wants to input new given date
 				//Get input from user and update it in its object in jArrayListPeople
 				int iDay, iMonth, iYear;
 				int[] iaBirthDate = new int[3];
@@ -334,11 +334,11 @@ public class Stage3 {
 								(iYear == iaBirthDate[2] && iMonth == iaBirthDate[1] && iDay < iaBirthDate[0])) { //Input date is before birthdate
 							jLabel_ErrorMessage.setText("Invalid Input");
 						}
-						else { //Input is valid. Create new Person object and replace the selected object.
+						else { //Input is valid. Update Person object with new given date.
 							
 							jArrayListPeople.get(iIndex).setGivenDate(iDay, iMonth, iYear);
 							
-							//now update the rectangles list and
+							//now update the rectangles list
 							createRectangles(jPanel_DrawingArea.getWidth(), jPanel_DrawingArea.getHeight());
 							
 							//redraw the bar graph for the selected item
@@ -432,13 +432,16 @@ public class Stage3 {
 		
 		int iMaxYear = 0;
 		int iNumPeople = jArrayListPeople.size();
+		
+		//Width of rectangle is proportionate to number of people and width of drawing area
 		int iRectangleWidth = iWidth/((2 * iNumPeople) + 1);
 		int iXCounter = 1;
-		double iY = 10;
-		// Initialize List of Rectangles for drawing
+		double iY = 10; // y coordinate of rectangle
+		
+		// Initialize Array List of Rectangles for drawing
 		jArrayListRectangles = new ArrayList<Rectangle2D.Double>();
 		
-		//Find the longest age
+		//Find the highest number_of_days_alive
 		for(Person person: jArrayListPeople) {
 			if(person.getDaysAlive() > iMaxYear)
 				iMaxYear = person.getDaysAlive();
@@ -446,12 +449,14 @@ public class Stage3 {
 		
 		//Calculate the rectangles which will be drawn as bar chart
 		for(Person person: jArrayListPeople) {
-			double iX = iXCounter * iRectangleWidth;
+			double iX = iXCounter * iRectangleWidth; // x coordinate of rectangle
+			
+			//height of rectangle/bar-graph will be proportionate to height of drawing area and height of other rectangles
+			//Bar-graph for Person with highest days_alive will be longest and others will be calculated proportionately
 			double iRectangleHeight = (((double)person.getDaysAlive() / (double) iMaxYear) * (double) (iHeight - iY - 5));
 			jArrayListRectangles.add(new Rectangle2D.Double(iX, 10, iRectangleWidth, iRectangleHeight));
 			iXCounter += 2;
 		}
-		
 	}
 
 
@@ -462,20 +467,21 @@ public class Stage3 {
 	
 	class MyJPanel extends JPanel {
 		
-		// Declare and instantiate an ellipse and rectangle object of 
-		// dimension zero. We will later just change their dimension 
-		// and location for efficiency.
-
-		ArrayList<Rectangle2D.Double> jArrayListBars;
-		Color[] color;
+		// Since this class is used to draw on bar-graphs, its attributes are only 2
+		//ArrayList of Rectangles (bar-graphs) and their corresponding colors in an Array
+		private ArrayList<Rectangle2D.Double> jArrayListBars;
+		private Color[] color;
 		
 		public MyJPanel() {
 			jArrayListBars = new ArrayList<Rectangle2D.Double>();
 		}
+		
+		//Method to set Color
 		public void setColor(Color[] color) {
 			this.color = color;
 		}
 		
+		//Method to set ArrayList of Rectangles
 		public void setBarGraphList(ArrayList<Rectangle2D.Double> bars) {
 			jArrayListBars = bars;
 		}
@@ -491,12 +497,15 @@ public class Stage3 {
 			 // As a side effect, it also clears it.
 			 super.paintComponent(g);
 			 
+			 //Draws the Rectangles in their corresponding color on BufferedImage
 			 int iColorIndex = 0;
 			 for(Rectangle2D.Double rectangle: jArrayListBars) {
 				 g2dImg.setPaint(color[iColorIndex]);
 				 g2dImg.fill(rectangle);
 				 iColorIndex++;
 			 }
+			 
+			 //Transfers the BufferedImage content to JPanel drawing area
 			 g.drawImage(img, 0, 0, null);
 		 }
 		 

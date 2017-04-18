@@ -157,7 +157,7 @@ public class Stage2 {
 		JButton jButton_Calculate = new JButton("Calculate");
 		jButton_Calculate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Get values entered by the user in try block to check for valid input
+				//Get values entered by the user in try catch block to check for valid input
 				//Input values are trimmed to remove accidental leading and trailing spaces
 				try {
 					iBirthDay = Integer.parseInt(jTextField_BirthDay.getText().trim());
@@ -167,7 +167,7 @@ public class Stage2 {
 					iGivenMonth = Integer.parseInt(jTextField_GivenMonth.getText().trim());
 					iGivenYear = Integer.parseInt(jTextField_GivenYear.getText().trim());
 					
-					//Check for days greater than 31 and months greater than 12
+					//Check input error for days greater than 31 and months greater than 12
 					if(iBirthDay > 31 || iGivenDay > 31 || iBirthMonth > 12 || iGivenMonth > 12)
 						jLabel_Result.setText("Error in Input");
 					else {
@@ -227,12 +227,14 @@ public class Stage2 {
 		});
 		jButton_Reset.setBounds(141, 153, 78, 29);
 		jFrame_DaysAliveCalculator.getContentPane().add(jButton_Reset);
-		
 	}
 
+	
 	/** Functions to calculate number of days when user clicks on Calculate button
-	 *  These functions are same ones used in Stage 1.
+	 *  These functions are same ones used in Stage1.
 	 */
+	
+	// Button click action calls this function which in turn calls the other three functions
 	protected void calculateNumberOfDays() {
 		
 		int iNumFullYear = 0;
@@ -251,14 +253,18 @@ public class Stage2 {
 		iNumNormalYear = iNumFullYear - iNumLeapYear;
 		
 		//Number of Days alive is the sum of days in birth year, given year and full years in between
-		iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + calculateDaysFullYears(iNumNormalYear, iNumLeapYear);
+		iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + 
+						calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + 
+						calculateDaysFullYears(iNumNormalYear, iNumLeapYear);
 	}
-
+	
+	//Function 3
 	private int calculateDaysFullYears(int iNumNormalYear, int iNumLeapYear) {
 		
 		return((iNumNormalYear * NUM_DAYS_NORMAL_YEAR) + (iNumLeapYear * NUM_DAYS_LEAP_YEAR));
 	}
 
+	//Function 2
 	private int calculateDaysGivenYear(int iDay, int iMonth, int iYear) {
 
 		int iNumDays = 0;
@@ -278,6 +284,7 @@ public class Stage2 {
 
 	}
 
+	//Function 1
 	private int calculateDaysBirthYear(int iDay, int iMonth, int iYear) {
 
 		int iNumDays = 0;

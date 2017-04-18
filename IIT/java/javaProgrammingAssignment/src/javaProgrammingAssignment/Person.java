@@ -22,13 +22,16 @@ public class Person {
 	private MyDate givenDate;
 	private int iDaysAlive;
 	
+	//Constructor creates Person Object
 	public Person(String sName, MyDate birthDate, MyDate givenDate) {
 		this.sName = sName;
 		this.birthDate = birthDate;
 		this.givenDate = givenDate;
+		//Number of days alive is calculated when the Person object is created by calling a private method
 		this.iDaysAlive=calculateDaysAlive();
 	}
 
+	//Private method to calculate number of days alive when Person object is created
 	private int calculateDaysAlive() {
 		
 		int iNum = 0;
@@ -106,6 +109,7 @@ public class Person {
 	
 	public void setGivenDate(int iDay, int iMonth, int iYear) {
 		givenDate.setDate(iDay, iMonth, iYear);
+		//Since this method sets givenDate to a new date, iDaysAlive is also updated accordingly
 		iDaysAlive = calculateDaysAlive();
 	}
 }
