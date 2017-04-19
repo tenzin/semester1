@@ -2,13 +2,16 @@
  * Stage4.java
  * Author: Tenzin Dendup (u3149399)
  * Date Created: 18 April 2017
- * Date Last Changed:
+ * Date Last Changed: 19 April 2017
  * This is a Java GUI application to calculate number of days alive.
  * It is stage 4 of IIT Java Assignment, University of Canberra.
  * Stage 4 is implemented with GUI and Object.
  * Stage 4 uses two other java source files, Person.java (for Person Object) and MyDate.java (For MyDate object)
- * For drawing purposes, stage 4 uses the MyJPanel inner class from lecture examples, with modifications.
- * Input: List of Names and sets of dates (Date of birth and another date) read from access database
+ * Stage 4 uses Java ArrayList to store People data.
+ * For drawing purposes, stage 4 uses the MyJPanel inner class from lecture examples by Roland Goecke, with modifications.
+ * For printing report, Stage 4 reused code from Star8.java by Roland Goecke with modifications.
+ * 
+ * Input: List of Names and sets of dates (Date of birth and another date) read from M.S. Access database
  * Output: Number of days alive and corresponding bar graph (on GUI) and Database report as text file.
  * 
  */
@@ -29,8 +32,10 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -41,6 +46,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -54,6 +60,8 @@ import javax.swing.event.ListSelectionListener;
 
 public class Stage4 {
 
+	private static final int MAX_LINES_PER_PAGE = 5;
+	
 	private JFrame frmDaysAliveCalculator;
 	private static ArrayList<Person> jArrayListPeople; //ArrayList to store details of people
 	private static ArrayList<Rectangle2D.Double> jArrayListRectangles; //Array List to store rectangles to draw bar graph
@@ -92,11 +100,14 @@ public class Stage4 {
 
 	/**
 	 * Initialize the contents of the frame.
+	 * Read data from database and populate ArrayList
 	 */
 	private void initialize() {
 		
 		jArrayListPeople = new ArrayList<Person>();
+		
 		//Read data from database
+		//Connect to database
 		java.sql.Connection conn = null;
 		
 		try {
@@ -110,7 +121,6 @@ public class Stage4 {
 	        // Get the ResultSet from the database
 	        ResultSet rs = stmt.executeQuery(sSql);
 	        
-	        rs.first();
 	        //Read through ResultSet and populate ArrayList of People objects
 	        while (rs.next()) {
 	        	MyDate birthDate, givenDate;
@@ -133,7 +143,8 @@ public class Stage4 {
 		
 		
 		frmDaysAliveCalculator = new JFrame();
-		frmDaysAliveCalculator.setTitle("Days Alive Calculator");
+		frmDaysAliveCalculator.setResizable(false);
+		frmDaysAliveCalculator.setTitle("Days Alive Calculator - Stage4 - u3149399");
 		frmDaysAliveCalculator.setBounds(100, 100, 648, 423);
 		frmDaysAliveCalculator.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmDaysAliveCalculator.getContentPane().setLayout(null);
@@ -232,9 +243,34 @@ public class Stage4 {
 		jButton_PrintReport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				//BufferedWriter out = new BufferedWriter(new FileWriter("report.txt"));
-				//String sFileName;
-				//Report report = new Report(jArrayListPeople, sFileName);
+				// Connect to database
+		        java.sql.Connection conn = null;
+		        try {
+		        	Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
+		        	conn = DriverManager.getConnection("jdbc:ucanaccess://dates.mdb");
+		            Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+		                    ResultSet.CONCUR_UPDATABLE);
+		            String sSql = "SELECT * FROM tblDates";
+		              	
+		            // Get the ResultSet from the database
+		            ResultSet rs = stmt.executeQuery(sSql);
+		    		
+		            printReport(rs, "Days Alive", "days_alive_report.txt");
+
+		        } catch(SQLException s) {
+		            System.out.println(s);
+		        } catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} finally {
+		            if (conn != null) {
+		                try {
+		                    conn.close();		// Close connection to database
+		                } catch(SQLException ignore) {}
+		            }
+		        }
+				
+				
 			}
 		});
 		jButton_PrintReport.setBounds(58, 364, 117, 29);
@@ -262,16 +298,6 @@ public class Stage4 {
 		g2dImg.setPaint(Color.WHITE);
 		g2dImg.fill(new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight()));
 		
-		/* This part is not required since bar graph is be drawn only when user selects a person
-		 * Draw all the bar graphs on MyJPane
-		jPanel_DrawingArea.setBarGraphList(jArrayListRectangles);
-		System.out.println("drawing all");
-		Color[] color = new Color[jArrayListRectangles.size()];
-		for(int iI = 0; iI < jArrayListRectangles.size(); iI++)
-			color[iI] = Color.BLACK;
-		jPanel_DrawingArea.setColor(color);
-		jPanel_DrawingArea.repaint();
-		*/
 	}
 	
 	//Method to create ArrayList of rectangles based on ArrayList of People and their details
@@ -310,6 +336,7 @@ public class Stage4 {
 	/**
 	 * Inner class for drawing. Extends JPanel by providing
 	 * new paintComponent and clear methods.
+	 * Code reused from Roland Goecke's code with modification (Added class attributes, constructor and methods)
 	 */
 	
 	class MyJPanel extends JPanel {
@@ -367,4 +394,134 @@ public class Stage4 {
 			 g2dImg.fill(new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight()));
 		 }
 	}
+	
+	
+	/**
+	 * Print the header of the report page
+	 * 
+	 * @param sHeader
+	 * @param pw
+	 * Code reused from Roland Goecke's code with modification
+	 */
+	private void pageHead(String sHeader, PrintWriter pw) 
+	{
+		pw.println(sHeader);	// Print the header string
+		
+		// Print a number of = signs under it as a way of underlining
+		// Work out how many = we need from the sHeader length
+		for (int iI = 0; iI < sHeader.length(); iI++)
+			pw.print("=");
+		pw.println();
+		
+		// Print an empty line at the end
+		pw.println();
+	}
+	
+	/**
+	 * Print footer of the report page
+	 * @param iPageNum
+	 * @param pw
+	 */
+	private void pageFooter(int iPageNum, PrintWriter pw) {
+		pw.println();	// Print an empty line at the beginning of the footer
+		
+		// Print the page number
+		pw.println("--- page "+ iPageNum +" ---");
+		
+		// Print 3 lines after it to simulate the beginning of a new report page
+		for (int iI = 0; iI < 3; iI++)
+			pw.println();
+	}
+	
+	/**
+	 * This method prints the body of the report page. It prints
+	 * MAX_LINES_PER_PAGE number of lines.
+	 * 
+	 * @param rs
+	 * @param iFirstRow
+	 * @param pw
+	 * @throws SQLException
+	 */
+	private void pageBody(ResultSet rs, int iFirstRow, int iNumRows, PrintWriter pw) throws SQLException {
+		int iLastRow = iFirstRow + MAX_LINES_PER_PAGE - 1;
+		
+		// As our last report page may not have the exact number of rows
+		// required per page, we need to fill it up with blank rows.
+		// Work out how many we need.
+		int iBlankRows = 0;
+		if (iLastRow > iNumRows - 1)
+		{
+			iBlankRows = iLastRow - (iNumRows - 1);
+			iLastRow = iNumRows - 1;
+		}
+		
+		// Print the column heads
+		// In addition to 7 column heads from database table, "daysAlive" column head is added
+		
+		ResultSetMetaData rmsd = rs.getMetaData();
+		String columnHeads = String.format("%1$-20s %2$-12s %3$-15s %4$-15s %5$-10s %6$-10s %7$-10s %8$-10s",
+				rmsd.getColumnName(1), rmsd.getColumnName(2),
+				rmsd.getColumnName(3), rmsd.getColumnName(4), rmsd.getColumnName(5), rmsd.getColumnName(6), rmsd.getColumnName(7), "daysAlive");
+		pw.println(columnHeads);
+		pw.println();
+
+		// Print the report lines for the current report page
+		for (int iRow = iFirstRow; iRow <= iLastRow; iRow++)
+		{
+			// Report line consists of 7 columns read from database plus "number of days alive" from ArrayList
+			String reportLine = String.format("%1$-20s %2$10s %3$14s %4$14s %5$10s %6$12s %7$9s %8$12s", 
+					rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getString(6), 
+					rs.getString(7), Integer.toString(jArrayListPeople.get(iRow).getDaysAlive())); 
+			pw.println(reportLine);
+			rs.next();
+		}
+		
+		// Now print the blank rows, if needed
+		for (int iRow = 0; iRow < iBlankRows; iRow++)
+			pw.println();
+	
+	}
+	
+	/**
+	 * Print a database report
+	 * 
+	 * @param stars
+	 * @param sHeader
+	 * @param sFileName
+	 */
+	private void printReport(ResultSet rs, String sHeader, String sFileName) {
+		try {
+			PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(sFileName)));
+			
+        	rs.last();						// Move to last row
+        	int iNumRows = rs.getRow();		// Get the number of rows
+        	rs.first();						// Move back to first row			
+        	int iNumPages = iNumRows / MAX_LINES_PER_PAGE;	// Work out how many report pages we need
+        	if (iNumPages * MAX_LINES_PER_PAGE < iNumRows)
+        		iNumPages++;
+			int iFirstRow = 0;				// Need to keep track of starting row for next report page
+			
+			// Write report
+			for (int iPageNum = 0; iPageNum < iNumPages; iPageNum++) {
+				pageHead(sHeader, out);
+				pageBody(rs, iFirstRow, iNumRows, out);
+				pageFooter(iPageNum + 1, out);
+				iFirstRow += MAX_LINES_PER_PAGE;
+			}
+			
+			out.close();
+			
+			// Show a pop up message when completed
+			JOptionPane.showMessageDialog(frmDaysAliveCalculator, "Database query report written to "+ 
+					sFileName +".");
+
+		} catch(IOException ioex) {
+			System.out.println(ioex);
+		} catch(SQLException s) {
+			System.out.println(s);
+		}
+
+	}
+	
+	
 }

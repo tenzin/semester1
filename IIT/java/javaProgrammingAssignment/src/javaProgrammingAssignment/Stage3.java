@@ -2,12 +2,14 @@
  * Stage3.java
  * Author: Tenzin Dendup (u3149399)
  * Date Created: 14 April 2017
- * Date Last Changed: 17 April 2017
+ * Date Last Changed: 19 April 2017
  * This is a Java GUI application to calculate number of days alive.
  * It is stage 3 of IIT Java Assignment, University of Canberra.
  * Stage 3 is implemented with GUI and Object.
  * Stage 3 uses two other java source files, Person.java (for Person Object) and MyDate.java (For MyDate object)
- * For drawing purposes, stage 3 uses the MyJPanel inner class from lecture examples, with modifications.
+ * Stage 3 uses Java ArrayList to store People data.
+ * For drawing purposes, stage 4 uses the MyJPanel inner class from lecture examples by Roland Goecke, with modifications.
+ * 
  * Input: List of Names and sets of dates (Date of birth and another date) read from text file
  * Output: Number of days alive and corresponding bar graph on GUI. Also GUI option for user to set date.
  * 
@@ -53,7 +55,7 @@ public class Stage3 {
 	private JFrame frmDaysAliveCalculator;
 	private static ArrayList<Person> jArrayListPeople; //ArrayList to store details of people
 	private static ArrayList<Rectangle2D.Double> jArrayListRectangles; //Array List to store rectangles to draw bar graph
-	private static ArrayList<MyDate> jArrayListOriginalGivenDates; ////Array List to store original Given dates.
+	private static ArrayList<MyDate> jArrayListOriginalGivenDates; //Array List to store original Given dates.
 	
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 	private JTextField jTextField_Day;
@@ -70,30 +72,7 @@ public class Stage3 {
 	 * Launch the application.
 	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws IOException {
-		
-		jArrayListPeople = new ArrayList<Person>();
-		jArrayListOriginalGivenDates = new ArrayList<MyDate>();
-		
-		//Read input from text file
-		BufferedReader in = new BufferedReader(new FileReader("dates.txt"));
-		String sLine;
-		
-		//Store input details as ArrayList of Person objects
-		while((sLine = in.readLine()) != null) {
-			String[] saTemp1, saTemp2, saTemp3;
-			MyDate birthDate, givenDate;
-			saTemp1 = sLine.split(";");
-			saTemp2 = saTemp1[1].split(",");
-			saTemp3 = saTemp1[2].split(",");
-			birthDate = new MyDate(Integer.parseInt(saTemp2[0]), Integer.parseInt(saTemp2[1]), Integer.parseInt(saTemp2[2]));
-			givenDate = new MyDate(Integer.parseInt(saTemp3[0]), Integer.parseInt(saTemp3[1]), Integer.parseInt(saTemp3[2]));
-			jArrayListPeople.add(new Person(saTemp1[0], birthDate, givenDate));
-			
-			//Store original given dates safely in ArrayList of MyDate objects
-			jArrayListOriginalGivenDates.add(new MyDate(Integer.parseInt(saTemp3[0]), Integer.parseInt(saTemp3[1]), Integer.parseInt(saTemp3[2])));
-		}
-		in.close();
+	public static void main(String[] args) {
 		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -116,9 +95,44 @@ public class Stage3 {
 
 	/**
 	 * Initialize the contents of the frame.
+	 * Read Data from file and populate ArrayList
 	 */
 	private void initialize() {
+		
+		jArrayListPeople = new ArrayList<Person>();
+		jArrayListOriginalGivenDates = new ArrayList<MyDate>();
+		
+		try {
+			
+			//Read input from text file
+			BufferedReader in = new BufferedReader(new FileReader("dates.txt"));
+			String sLine;
+			
+			//Store input details as ArrayList of Person objects
+			while((sLine = in.readLine()) != null) {
+				String[] saTemp1, saTemp2, saTemp3;
+				MyDate birthDate, givenDate;
+				saTemp1 = sLine.split(";");
+				saTemp2 = saTemp1[1].split(",");
+				saTemp3 = saTemp1[2].split(",");
+				birthDate = new MyDate(Integer.parseInt(saTemp2[0]), Integer.parseInt(saTemp2[1]), Integer.parseInt(saTemp2[2]));
+				givenDate = new MyDate(Integer.parseInt(saTemp3[0]), Integer.parseInt(saTemp3[1]), Integer.parseInt(saTemp3[2]));
+				jArrayListPeople.add(new Person(saTemp1[0], birthDate, givenDate));
+				
+				//Store original given dates safely in ArrayList of MyDate objects
+				jArrayListOriginalGivenDates.add(new MyDate(Integer.parseInt(saTemp3[0]), Integer.parseInt(saTemp3[1]), Integer.parseInt(saTemp3[2])));
+			}
+			//Close file
+			in.close();
+			
+		}
+		catch (IOException e)
+		{
+			System.out.println("ERROR: Could not read text file!");
+		}
+		
 		frmDaysAliveCalculator = new JFrame();
+		frmDaysAliveCalculator.setResizable(false);
 		frmDaysAliveCalculator.setTitle("Days Alive Calculator - Stage3 - u3149399");
 		frmDaysAliveCalculator.setBounds(100, 100, 648, 447);
 		frmDaysAliveCalculator.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -424,6 +438,15 @@ public class Stage3 {
 		jLabel_GraphLabel.setBounds(238, 15, 238, 16);
 		frmDaysAliveCalculator.getContentPane().add(jLabel_GraphLabel);
 		
+		JButton jButton_Quit = new JButton("Quit");
+		jButton_Quit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		jButton_Quit.setBounds(525, 379, 117, 29);
+		frmDaysAliveCalculator.getContentPane().add(jButton_Quit);
+		
 		// Instantiate the BufferedImage object and give it the same width 
 		// and height as that of the drawing area JPanel
 		img = new BufferedImage(jPanel_DrawingArea.getWidth(), 
@@ -436,17 +459,6 @@ public class Stage3 {
 		// Draw a filled white colored rectangle on the entire area to clear it.
 		g2dImg.setPaint(Color.WHITE);
 		g2dImg.fill(new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight()));
-		
-		/* This part is not required since bar graph is be drawn only when user selects a person
-		 * Draw all the bar graphs on MyJPane
-		jPanel_DrawingArea.setBarGraphList(jArrayListRectangles);
-		System.out.println("drawing all");
-		Color[] color = new Color[jArrayListRectangles.size()];
-		for(int iI = 0; iI < jArrayListRectangles.size(); iI++)
-			color[iI] = Color.BLACK;
-		jPanel_DrawingArea.setColor(color);
-		jPanel_DrawingArea.repaint();
-		*/
 	}
 	
 	//Function to create ArrayList of rectangles based on ArrayList of People and their details
@@ -485,6 +497,7 @@ public class Stage3 {
 	/**
 	 * Inner class for drawing. Extends JPanel by providing
 	 * new paintComponent and clear methods.
+	 * Code reused from Roland Goecke's code with modification (Added class attributes, constructor and methods)
 	 */
 	
 	class MyJPanel extends JPanel {

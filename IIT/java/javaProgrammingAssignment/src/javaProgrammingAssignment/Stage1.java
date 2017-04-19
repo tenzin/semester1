@@ -54,22 +54,35 @@ public class Stage1 {
 				System.exit(1);
 			}
 			else { //Input is fine
-				// Calculate the number of full years. If we omit the birth year and the given year, the years in between are full years
-				iNumFullYear = iGivenYear - iBirthYear - 1;
 				
-				// Now calculate the number of leap years in those full years
-				for(int iI=iBirthYear + 1; iI < iGivenYear; iI++) {
-					if(new GregorianCalendar().isLeapYear(iI))
-						iNumLeapYear++;
+				//Logic to calculate the number of days alive
+				if(iBirthYear == iGivenYear) { //birth year and given year are same
+					iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) - 
+									calculateDaysBirthYear(iGivenDay, iGivenMonth, iGivenYear) + 1;
 				}
 				
-				//Calculate number of normal years
-				iNumNormalYear = iNumFullYear - iNumLeapYear;
-				
-				//Number of Days alive is the sum of days in birth year, given year, and full years in between
-				iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + 
-								calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + 
-								calculateDaysFullYears(iNumNormalYear, iNumLeapYear); 
+				else {
+					if(iGivenYear == iBirthYear + 1) //Birth Year and given Years are consecutive years
+						iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + 
+										calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear);
+					else {
+						if(iGivenYear > iBirthYear + 1) { //There is at least one year between birth year and given year
+							//Calculate number of years in between
+							iNumFullYear = iGivenYear - iBirthYear - 1;
+							//Calculate number of leap years
+							for(int iI=iBirthYear + 1; iI < iGivenYear; iI++) { 
+								if(new GregorianCalendar().isLeapYear(iI))
+									iNumLeapYear++;
+							//Calculate number of Normal years
+							iNumNormalYear = iNumFullYear - iNumLeapYear;
+							//Get result
+							iNumDaysAlive = calculateDaysBirthYear(iBirthDay, iBirthMonth, iBirthYear) + 
+											calculateDaysGivenYear(iGivenDay, iGivenMonth, iGivenYear) + 
+											calculateDaysFullYears(iNumNormalYear, iNumLeapYear);
+							}	
+						}
+					}
+				}
 				
 				//Display result
 				System.out.println("Date of birth: " + iBirthDay + "/" + iBirthMonth + "/" + iBirthYear);
@@ -101,8 +114,8 @@ public class Stage1 {
 		for(int iI = iMonth + 1; iI <= 12; iI++)
 			iNumDays += NUMBER_OF_MONTH_DAYS[iI - 1];
 		
-		//Check for LEAP year && February month. If TRUE add 1 to iNumDays;
-		if(new GregorianCalendar().isLeapYear(iYear) && iMonth == 2)
+		//Check for LEAP year && month feb or before feb. If TRUE add 1 to iNumDays;
+		if(new GregorianCalendar().isLeapYear(iYear) && iMonth <= 2)
 			iNumDays++;
 		return(iNumDays);
 	}
